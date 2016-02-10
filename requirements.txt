@@ -5,6 +5,9 @@ django-csp
 git+https://github.com/adamalton/django-csp-reports.git#egg=cspreports
 django-session-csrf
 nose
+NoseGAE
+django-nose
+nose-cov
 six
 django-extensions
 crispy-forms-foundation

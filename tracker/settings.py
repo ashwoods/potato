@@ -141,4 +141,8 @@ CRISPY_TEMPLATE_PACK = 'foundation-5'
 
 AUTH_USER_MODEL = 'djangae.GaeUser'
 
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = ['--failed', '--stop', '--logging-level=ERROR', '--pdb', '--with-gae']
+
+
 from djangae.contrib.gauth.settings import *

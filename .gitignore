@@ -30,6 +30,9 @@ var/
 *.manifest
 *.spec
 
+# editors
+.idea
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -44,6 +47,8 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
+.noseids
+.python-version
 
 # Translations
 *.mo
@@ -60,3 +65,7 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# gae
+.storage/
+.envdir/
