@@ -32,5 +32,5 @@ class SiteViewTest(TestCase):
         request.user = self.user
         response = create_project_view(request)
         assert_code(response, 200)
-
+        assert(response.render())
 
