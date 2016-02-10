@@ -10,6 +10,16 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: django_content_type
+  properties:
+  - name: app_label
+  - name: name
+
+- kind: django_migrations
+  properties:
+  - name: app
+  - name: name
+
 - kind: site_project
   properties:
   - name: modified
@@ -22,16 +32,6 @@ indexes:
   - name: assignees_ids
   - name: modified
     direction: desc
-
-- kind: django_content_type
-  properties:
-  - name: app_label
-  - name: name
-
-- kind: django_migrations
-  properties:
-  - name: app
-  - name: name
 
 - kind: site_ticket
   properties:

@@ -8,6 +8,10 @@ nose
 NoseGAE
 django-nose
 nose-cov
+nose-progressive
+ipdbplugin
+ipdb
+ipython
 six
 django-extensions
 crispy-forms-foundation
