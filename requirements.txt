@@ -12,6 +12,8 @@ nose-progressive
 ipdbplugin
 ipdb
 ipython
+nose-pudb
+pudb
 six
 django-extensions
 crispy-forms-foundation
