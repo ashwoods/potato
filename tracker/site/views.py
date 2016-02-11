@@ -2,23 +2,21 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView
+from django.utils.functional import cached_property
 
 from .forms import ProjectForm, TicketForm
 from .models import Project, Ticket
 
 
 class ProjectContextMixin(object):
-    project = None
 
-    def get_project(self):
-        if not self.project:
-            self.project = get_object_or_404(Project, pk=self.kwargs['project_id'])
-
-        return self.project
+    @cached_property
+    def project(self):
+        return get_object_or_404(Project, pk=self.kwargs['project_id'])
 
     def get_context_data(self, **kwargs):
         context = super(ProjectContextMixin, self).get_context_data(**kwargs)
-        context['current_project'] = self.get_project()
+        context['current_project'] = self.project
         return context
 
 
@@ -93,7 +91,7 @@ class ProjectView(ProjectContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectView, self).get_context_data(**kwargs)
-        project = self.get_project()
+        project = self.project
         context.update({
             "project": project,
             "tickets": project.tickets.all()
@@ -114,7 +112,7 @@ class CreateTicketView(ProjectContextMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(CreateTicketView, self).get_form_kwargs()
-        kwargs['project'] = self.get_project()
+        kwargs['project'] = self.project
         kwargs['user'] = self.request.user
         kwargs['title'] = 'Create ticket'
         return kwargs
