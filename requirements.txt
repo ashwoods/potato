@@ -15,5 +15,6 @@ ipython
 nose-pudb
 pudb
 six
+pre-commit
 django-extensions
 crispy-forms-foundation

@@ -1,0 +1,13 @@
+-   repo: git@github.com:pre-commit/pre-commit-hooks
+    sha: 616c1ebd1898c91de9a0548866a59cbd9f4547f6
+    hooks:
+    -   id: check-added-large-files
+    -   id: flake8
+        exclude: migrations,settings
+        args: [--max-line-length=147, --ignore=E402]
+    -   id: debug-statements
+        files: \.py$
+    -   id: trailing-whitespace
+        files: \.(py|sh|yaml|txt)$
+    -   id: end-of-file-fixer
+        files: \.(py|sh|yaml)$

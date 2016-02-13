@@ -34,10 +34,10 @@ INTERNAL_IPS = (
     '::1'
 )
 
-# Application definition
+#  Application definition
 
 INSTALLED_APPS = (
-    'djangae', # Djangae needs to come before django apps in django 1.7 and above
+    'djangae',  # Djangae needs to come before django apps in django 1.7 and above
     'django.contrib.admin',
     'django.contrib.auth',
     'djangae.contrib.gauth.datastore',

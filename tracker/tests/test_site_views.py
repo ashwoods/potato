@@ -150,4 +150,3 @@ class TicketViewTest(TestCase):
         request.user = self.user
         response = views.my_tickets_view(request)
         assert_code(response, 200)
-
