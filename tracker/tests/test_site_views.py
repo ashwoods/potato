@@ -1,12 +1,13 @@
-from nose.tools import ok_, eq_
+from nose.tools import ok_, eq_, raises
 
 from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.test import TestCase, RequestFactory
 
 
-from django_nose.tools import assert_code, assert_ok
+from django_nose.tools import assert_code
 
 from tracker.site import views
 from tracker.site.models import Project, Ticket
@@ -150,3 +151,31 @@ class TicketViewTest(TestCase):
         request.user = self.user
         response = views.my_tickets_view(request)
         assert_code(response, 200)
+
+    @raises(Http404)
+    def test_user_update_ticket_move_bug_post(self):
+        """
+        Regression test for issue https://github.com/ashwoods/potatoist/issues/2 move ticket to another project
+
+        """
+        new_project = Project.objects.create(title='New Project')
+
+        wrong_kwargs = {'project_id': new_project.pk, 'ticket_id': self.test_ticket.pk}
+
+        request = self.rf.post(reverse('ticket-update', kwargs=wrong_kwargs), self.form_post_data)
+        request.user = self.user
+        views.update_ticket_view(request, **wrong_kwargs)
+
+    @raises(Http404)
+    def test_user_update_ticket_move_bug_get(self):
+        """
+        Regression test for issue https://github.com/ashwoods/potatoist/issues/2 move ticket to another project
+
+        """
+        new_project = Project.objects.create(title='New Project')
+
+        wrong_kwargs = {'project_id': new_project.pk, 'ticket_id': self.test_ticket.pk}
+
+        request = self.rf.get(reverse('ticket-update', kwargs=wrong_kwargs))
+        request.user = self.user
+        views.update_ticket_view(request, **wrong_kwargs)

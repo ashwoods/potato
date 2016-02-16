@@ -127,6 +127,9 @@ class UpdateTicketView(ProjectContextMixin, UpdateView):
     pk_url_kwarg = 'ticket_id'
     template_name = "site/ticket_form.html"
 
+    def get_queryset(self):
+        return super(UpdateTicketView, self).get_queryset().filter(project=self.kwargs['project_id'])
+
     def get_success_url(self):
         return reverse("project-detail", kwargs={"project_id": self.kwargs['project_id']})
 
