@@ -73,6 +73,6 @@ target/
 # node & bower
 node_modules
 tracker/static-dev/components
-
+tracker/static-dev/css
 
 
