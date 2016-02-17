@@ -26,3 +26,6 @@ class Ticket(TimeStampedModel):
 
     def __str__(self):
         return self.title
+
+    def get_full_title(self):
+        return "%s: %s" % (self.project.title, self.title)

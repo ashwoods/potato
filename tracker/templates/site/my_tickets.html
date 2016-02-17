@@ -4,13 +4,15 @@
 <div class="row">
 	<div class="large-12 columns">
 		<div class="row">
-			<div class="row">
+			<div class="row" data-equalizer="ticket">
 			{% for ticket in tickets %}
 				<div class="large-3 medium-6 small-12 columns{% if forloop.last %} end{% endif %}">
 					<div class="panel">
-						<h5><a href="{% url "ticket-update" project_id=ticket.project_id ticket_id=ticket.pk %}">{{ ticket.project.title }}: {{ ticket.title }}</a></h5>
-						<hr>
-						<p>{{ ticket.description }}</p>
+						<div data-equalizer-watch="ticket">
+                            <h5><a href="{% url "ticket-update" project_id=ticket.project_id ticket_id=ticket.pk %}">{{ ticket.get_full_title|truncatechars:60 }}</a></h5>
+						    <hr>
+						    <p>{{ ticket.description|truncatechars:120 }}</p>
+                        </div>
 						<small>Last updated: {{ ticket.modified }}</small>
 					</div>
 				</div>
