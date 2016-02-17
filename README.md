@@ -9,6 +9,8 @@ The project is a no-thrills easy to use issue tracking system that a developer l
 - Run `./install_deps` (this will pip install requirements, and download the App Engine SDK)
 - `python manage.py loaddata site`
 - `python manage.py runserver`
+- `npm install` (node has to be installed - for frontend development)
+- `bower install` (for frontend development)
 
 The application is written using the [Djangae](http://djangae.readthedocs.org/en/latest/) project
 
