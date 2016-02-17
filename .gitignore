@@ -66,6 +66,13 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
-# gae
+# gae & environment variables
 .storage/
 .envdir/
+
+# node & bower
+node_modules
+tracker/static-dev/components
+
+
+
