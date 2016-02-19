@@ -18,3 +18,4 @@ six
 pre-commit
 django-extensions
 crispy-forms-foundation
+enum34

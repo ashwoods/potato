@@ -10,7 +10,7 @@ from django.test import TestCase, RequestFactory
 from django_nose.tools import assert_code
 
 from tracker.site import views
-from tracker.site.models import Project, Ticket
+from tracker.site.models import Project, Ticket, TICKET_STATES
 
 
 class ProjectViewTest(TestCase):
@@ -179,3 +179,17 @@ class TicketViewTest(TestCase):
         request = self.rf.get(reverse('ticket-update', kwargs=wrong_kwargs))
         request.user = self.user
         views.update_ticket_view(request, **wrong_kwargs)
+
+    def test_user_update_state_get(self):
+        request = self.rf.post(reverse('ticket-update', kwargs=self.ticket_kwargs), {'transition': 'open'})
+        request.user = self.user
+        response = views.update_state_ticket_view(request, **self.ticket_kwargs)
+        assert_code(response, 302)
+
+    def test_user_update_state_post(self):
+        request = self.rf.post(reverse('ticket-update', kwargs=self.ticket_kwargs), {'transition': 'open'})
+        request.user = self.user
+        response = views.update_state_ticket_view(request, **self.ticket_kwargs)
+        ticket = Ticket.objects.get(pk=self.test_ticket.pk)
+        eq_(ticket.state, TICKET_STATES.OPEN)
+        assert_code(response, 302)

@@ -1,9 +1,10 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView
+from django.views.decorators.http import require_POST
 from django.utils.functional import cached_property
-
+from django.contrib import messages
 from .forms import ProjectForm, TicketForm
 from .models import Project, Ticket
 
@@ -142,3 +143,16 @@ class UpdateTicketView(ProjectContextMixin, UpdateView):
 
 
 update_ticket_view = login_required(UpdateTicketView.as_view())
+
+
+@login_required
+@require_POST
+def update_state_ticket_view(request, project_id, ticket_id):
+    ticket = get_object_or_404(Ticket, project=project_id, pk=ticket_id)
+    action = request.POST.get('transition')
+    if action in [transition.name for transition in ticket.get_available_state_transitions()]:
+        getattr(ticket, action)()
+        ticket.save()
+        #messages.success(request, 'Your ticket has been successfully %s' % action)
+
+    return redirect(reverse('my-tickets'))

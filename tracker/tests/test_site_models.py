@@ -36,3 +36,27 @@ class ProjectModelCounterlTest(TestCase):
         self.test_project.tickets.all().delete()
         eq_(self.test_project.counter.value(), 0)
 
+    def test_counter_on_transition(self):
+        for i in range(1,10):
+            Ticket.objects.create(project=self.test_project, title="Title %s" % i)
+        eq_(self.test_project.counter.value(), 9)
+        eq_(self.test_project.new_counter.value(), 9)
+        test_ticket = self.test_project.tickets.all()[0]
+
+        test_ticket.open()
+        test_ticket.save()
+        eq_(self.test_project.counter.value(), 9)
+        eq_(self.test_project.new_counter.value(), 8)
+        eq_(self.test_project.open_counter.value(), 1)
+        test_ticket.close()
+        test_ticket.save()
+        eq_(self.test_project.counter.value(), 9)
+        eq_(self.test_project.open_counter.value(), 0)
+        eq_(self.test_project.closed_counter.value(), 1)
+        test_ticket.safe_delete()
+        test_ticket.save()
+        eq_(self.test_project.counter.value(), 8)
+        eq_(self.test_project.closed_counter.value(), 0)
+        eq_(self.test_project.deleted_counter.value(), 1)
+
+
