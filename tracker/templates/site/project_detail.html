@@ -6,50 +6,62 @@
 		<h2>{{ project.title }} <small><a href="{% url "project-update" project_id=project.pk %}">edit</a></small></h2>
 	</div>
 	<div class="row">
-		<table>
-			<thead>
-				<tr>
-					<th width="1200">Title</th>
-					<th width="1200">Assigned</th>
-                    <th>State</th>
-					<th></th>
-                    <th></th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for ticket in tickets %}
-				<tr>
-					<td>{{ ticket.title }}</td>
-					<td>
-					{% for user in ticket.assignees.all %}
-						{{ user.email }}{% if not forloop.last %},{% endif %}
-					{% endfor %}
-					</td>
-                    <td>{{ ticket.get_literal_state.name }}</td>
-					<td>
-						<a href="{% url "ticket-update" project_id=project.pk ticket_id=ticket.pk %}">
-							<i class="fi-pencil">
+        {% if tickets %}
+            <table>
+                <thead>
+                    <tr>
+                        <th width="1200">Title</th>
+                        <th width="1200">Assigned</th>
+                        <th>State</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.title }}</td>
+                            <td>
+                                {% for user in assignees %}
+                                    {{ user.email }}{% if not forloop.last %},{% endif %}
+                                {% empty %}
+                                    No assigned users
+                                {% endfor %}
 
-							</i>
-						</a>
-					</td>
-                    <td>
-						<a data-dropdown='drop' href="#">
-							<i class="fi-list"></i>
-						</a>
-                        <form method="post" action="{% url "ticket-state-update" project_id=ticket.project_id ticket_id=ticket.id %}">
-                            {% csrf_token %}
-                            <ul id="drop" class="content f-dropdown" data-dropdown-content>
-                            {% for transition in ticket.get_available_state_transitions %}
-                                <li><a class="postlink {{ transition.name }}" data-transition="{{transition.name}}">{{ transition.custom.label }}</a></li>
-                            {% endfor %}
-                            </ul>
-                        </form>
-					</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+                            </td>
+                            <td>{{ ticket.get_literal_state.name }}</td>
+                            <td>
+                                <a href="{% url "ticket-update" project_id=project.pk ticket_id=ticket.pk %}">
+                                    <i class="fi-pencil">
+
+                                    </i>
+                                </a>
+                            </td>
+                            <td>
+                                <a data-dropdown='drop' href="#">
+                                    <i class="fi-list"></i>
+                                </a>
+                                <form method="post" action="{% url "ticket-state-update" project_id=ticket.project_id ticket_id=ticket.id %}">
+                                    {% csrf_token %}
+                                    <ul id="drop" class="content f-dropdown" data-dropdown-content>
+                                    {% for transition in ticket.get_available_state_transitions %}
+                                        <li><a class="postlink {{ transition.name }}" data-transition="{{transition.name}}">{{ transition.custom.label }}</a></li>
+                                    {% endfor %}
+                                    </ul>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="panel callout">
+                <h4>There are currently no tickets.</h4>
+				<p>
+                Click on <b>Create Ticket</b> button below to make a new one!
+				</p>
+            </div>
+        {% endif %}
 	</div>
 	<div class="row">
 		<p><a href="{% url "ticket-create" project_id=project.pk %}" class="button">Create ticket</a></p>
