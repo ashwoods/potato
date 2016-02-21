@@ -71,6 +71,12 @@
 
 			<div class="row content">
 				<div class="large-12">
+                    {% for message in messages %}
+                        <div data-alert class="alert-box {{ message.tags }}">
+                            {{ message }}
+                            <button tabindex="0" class="close" aria-label="Close Alert">&times;</button>
+                        </div>
+                    {% endfor %}
 				{% block content %}{% endblock %}
 				</div>
 			</div>
@@ -90,6 +96,7 @@
 			<script src="{{ STATIC_URL }}components/jquery/dist/jquery.min.js"></script>
 			<script src="{{ STATIC_URL }}components/fastclick/lib/fastclick.js"></script>
 			<script src="{{ STATIC_URL }}components/foundation/js/foundation.min.js"></script>
+            <script src="{{ STATIC_URL }}components/jquery.cookie/jquery.cookie.js"></script>
 			<script src="{{ STATIC_URL }}js/app.js"></script>
 			{% else %}
 			<script src="{{ STATIC_URL }}js/app.built.js"></script>

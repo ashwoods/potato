@@ -10,6 +10,7 @@ from django_fsm import FSMIntegerField, transition
 from django_fsm.signals import post_transition
 from enum import IntEnum
 
+
 @python_2_unicode_compatible
 class Project(TimeStampedModel):
     title = models.CharField(max_length=200)
@@ -49,15 +50,21 @@ class Ticket(TimeStampedModel):
     def get_full_title(self):
         return "%s: %s" % (self.project.title, self.title)
 
-    @transition(field=state, source=TICKET_STATES.NEW, target=TICKET_STATES.OPEN)
+    def get_literal_state(self):
+        return TICKET_STATES(self.state)
+
+    def get_transition_verbs(self):
+        return {t.name: t.custom['verb'] for t in self.get_available_state_transitions()}
+
+    @transition(field=state, source=TICKET_STATES.NEW, target=TICKET_STATES.OPEN, custom={'label': 'Open', 'verb': 'opened'})
     def open(self):
         pass
 
-    @transition(field=state, source=[TICKET_STATES.NEW, TICKET_STATES.OPEN], target=TICKET_STATES.CLOSED)
+    @transition(field=state, source=[TICKET_STATES.NEW, TICKET_STATES.OPEN], target=TICKET_STATES.CLOSED, custom={'label': 'Close', 'verb':'closed'})
     def close(self):
         pass
 
-    @transition(field=state, source='*', target=TICKET_STATES.DELETED)
+    @transition(field=state, source='+', target=TICKET_STATES.DELETED, custom={'label': 'Delete', 'verb': 'deleted'})
     def safe_delete(self):
         pass
 
@@ -73,6 +80,7 @@ def set_ticket_counter_on_create(sender, instance, created, *args, **kwargs):
     if created:
         instance.project.counter.increment()
         instance.project.new_counter.increment()
+
 
 @receiver(post_delete, sender=Ticket)
 def set_ticket_counter_on_delete(sender, instance, *args, **kwargs):

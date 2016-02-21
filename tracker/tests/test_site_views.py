@@ -5,6 +5,7 @@ from django.http import Http404
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.test import TestCase, RequestFactory
+from django.contrib.messages.storage.fallback import FallbackStorage
 
 
 from django_nose.tools import assert_code
@@ -23,6 +24,7 @@ class ProjectViewTest(TestCase):
 
     def test_project_list_view(self):
         request = self.rf.get(reverse('project-list'))
+        request.user = self.user
         response = views.project_list_view(request)
         assert_code(response, 200)
 
@@ -181,15 +183,19 @@ class TicketViewTest(TestCase):
         views.update_ticket_view(request, **wrong_kwargs)
 
     def test_user_update_state_get(self):
-        request = self.rf.post(reverse('ticket-update', kwargs=self.ticket_kwargs), {'transition': 'open'})
+        request = self.rf.get(reverse('ticket-update', kwargs=self.ticket_kwargs), {'transition': 'open'})
         request.user = self.user
         response = views.update_state_ticket_view(request, **self.ticket_kwargs)
-        assert_code(response, 302)
+        assert_code(response, 405)
 
     def test_user_update_state_post(self):
         request = self.rf.post(reverse('ticket-update', kwargs=self.ticket_kwargs), {'transition': 'open'})
         request.user = self.user
+        # https://stackoverflow.com/questions/15852317/you-cannot-add-messages-without-installing-django-contrib-messages-middleware-me
+        setattr(request, 'session', 'session')
+        messages = FallbackStorage(request)
+        setattr(request, '_messages', messages)
         response = views.update_state_ticket_view(request, **self.ticket_kwargs)
+        assert_code(response, 302)
         ticket = Ticket.objects.get(pk=self.test_ticket.pk)
         eq_(ticket.state, TICKET_STATES.OPEN)
-        assert_code(response, 302)

@@ -7,6 +7,7 @@ from django.utils.functional import cached_property
 from django.contrib import messages
 from .forms import ProjectForm, TicketForm
 from .models import Project, Ticket
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 
 class ProjectContextMixin(object):
@@ -29,7 +30,8 @@ class MyTicketsView(TemplateView):
             tickets = (
                 Ticket.objects
                 .filter(assignees=self.request.user.pk)
-                .order_by('-modified')
+                .exclude(state=0)
+                .order_by('state', '-modified')
             )
         else:
             tickets = []
@@ -47,7 +49,7 @@ class ProjectListView(ListView):
     template_name = "site/project_list.html"
 
 
-project_list_view = ProjectListView.as_view()
+project_list_view = login_required(ProjectListView.as_view())
 
 
 class CreateProjectView(CreateView):
@@ -95,12 +97,12 @@ class ProjectView(ProjectContextMixin, TemplateView):
         project = self.project
         context.update({
             "project": project,
-            "tickets": project.tickets.all()
+            "tickets": project.tickets.exclude(state=0).order_by('state', 'modified')
         })
         return context
 
 
-project_view = ProjectView.as_view()
+project_view = login_required(csrf_protect(ProjectView.as_view()))
 
 
 class CreateTicketView(ProjectContextMixin, CreateView):
@@ -129,7 +131,7 @@ class UpdateTicketView(ProjectContextMixin, UpdateView):
     template_name = "site/ticket_form.html"
 
     def get_queryset(self):
-        return super(UpdateTicketView, self).get_queryset().filter(project=self.kwargs['project_id'])
+        return super(UpdateTicketView, self).get_queryset().filter(project=self.kwargs['project_id']).exclude(state=0)
 
     def get_success_url(self):
         return reverse("project-detail", kwargs={"project_id": self.kwargs['project_id']})
@@ -149,10 +151,13 @@ update_ticket_view = login_required(UpdateTicketView.as_view())
 @require_POST
 def update_state_ticket_view(request, project_id, ticket_id):
     ticket = get_object_or_404(Ticket, project=project_id, pk=ticket_id)
-    action = request.POST.get('transition')
-    if action in [transition.name for transition in ticket.get_available_state_transitions()]:
-        getattr(ticket, action)()
+    transition = request.POST.get('transition')
+    verbs = ticket.get_transition_verbs()
+    if transition in verbs.keys():
+        getattr(ticket, transition)()
         ticket.save()
-        #messages.success(request, 'Your ticket has been successfully %s' % action)
-
-    return redirect(reverse('my-tickets'))
+        messages.success(request, 'Your ticket has been successfully %s.' % verbs[transition])
+    else:
+        messages.error(request, 'Error! Could not %s ticket!' % transition)
+    redirect_url = request.GET.get('redirect') or reverse('my-tickets')
+    return redirect(redirect_url)
