@@ -6,6 +6,11 @@ from crispy_forms_foundation.forms import FoundationModelForm
 from .models import Project, Ticket
 
 
+class EmailModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.email
+
+
 class BaseTrackerForm(FoundationModelForm):
     def __init__(self, user=None, title=None, *args, **kwargs):
         self.title = title
@@ -42,7 +47,7 @@ class ProjectForm(BaseTrackerForm):
 
 
 class TicketForm(BaseTrackerForm):
-    assignees = forms.ModelMultipleChoiceField(queryset=None, required=False)
+    assignees = EmailModelMultipleChoiceField(queryset=None, required=False)
 
     class Meta:
         model = Ticket
