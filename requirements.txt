@@ -20,3 +20,4 @@ pre-commit
 django-extensions
 crispy-forms-foundation
 enum34
+django-debug-toolbar

@@ -95,9 +95,13 @@ class ProjectView(ProjectContextMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ProjectView, self).get_context_data(**kwargs)
         project = self.project
+        tickets = project.tickets.filter(state__in=[1, 2, 3])
+        my_tickets = tickets.filter(assignees__in=[self.request.user])
+        my_ticket_ids = my_tickets.values_list('id', flat=True)
         context.update({
             "project": project,
-            "tickets": project.tickets.exclude(state=0).order_by('state', 'modified')
+            "my_tickets": my_tickets,
+            "tickets": tickets.exclude(id__in=my_ticket_ids)
         })
         return context
 

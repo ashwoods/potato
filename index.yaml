@@ -50,8 +50,41 @@ indexes:
 - kind: site_ticket
   properties:
   - name: assignees_ids
+  - name: project_id
+  - name: state
+  - name: assignees_ids
+
+- kind: site_ticket
+  properties:
+  - name: assignees_ids
+  - name: project_id
   - name: state
   - name: modified
+
+- kind: site_ticket
+  properties:
+  - name: assignees_ids
+  - name: project_id
+  - name: state
+  - name: modified
+    direction: desc
+  - name: created
+    direction: desc
+
+- kind: site_ticket
+  properties:
+  - name: assignees_ids
+  - name: state
+  - name: modified
+    direction: desc
+
+- kind: site_ticket
+  properties:
+  - name: assignees_ids
+  - name: state
+  - name: modified
+    direction: desc
+  - name: created
     direction: desc
 
 - kind: site_ticket
@@ -79,3 +112,12 @@ indexes:
   - name: project_id
   - name: state
   - name: modified
+
+- kind: site_ticket
+  properties:
+  - name: project_id
+  - name: state
+  - name: modified
+    direction: desc
+  - name: created
+    direction: desc

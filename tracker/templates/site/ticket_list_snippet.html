@@ -1,0 +1,32 @@
+<tr>
+    <td>{{ ticket.title }}</td>
+    <td>
+        {% for user in ticket.assignees.all %}
+            {{ user.email }}{% if not forloop.last %},{% endif %}
+        {% empty %}
+            No assigned users
+        {% endfor %}
+
+    </td>
+    <td>{{ ticket.get_literal_state.name }}</td>
+    <td>
+        <a href="{% url "ticket-update" project_id=project.pk ticket_id=ticket.pk %}">
+            <i class="fi-pencil">
+
+            </i>
+        </a>
+    </td>
+    <td>
+        <a data-dropdown='drop' href="#">
+            <i class="fi-list"></i>
+        </a>
+        <form method="post" action="{% url "ticket-state-update" project_id=ticket.project_id ticket_id=ticket.id %}">
+            {% csrf_token %}
+            <ul id="drop" class="content f-dropdown" data-dropdown-content>
+            {% for transition in ticket.get_available_state_transitions %}
+                <li><a class="postlink {{ transition.name }}" data-transition="{{transition.name}}">{{ transition.custom.label }}</a></li>
+            {% endfor %}
+            </ul>
+        </form>
+    </td>
+</tr>

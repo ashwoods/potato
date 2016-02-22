@@ -53,7 +53,9 @@ INSTALLED_APPS = (
     'crispy_forms',
     'crispy_forms_foundation',
     'tracker',
-    'tracker.site'
+    'tracker.site',
+    'debug_toolbar',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,6 +67,7 @@ MIDDLEWARE_CLASSES = (
     'csp.middleware.CSPMiddleware',
     'session_csrf.CsrfMiddleware',
     'djangosecure.middleware.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -150,5 +153,9 @@ NOSE_ARGS = ['--failed',
              '--with-gae',
              '--with-progressive',
              ]
+
+# DEBUG TOOLBAR
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
 
 from djangae.contrib.gauth.settings import *
